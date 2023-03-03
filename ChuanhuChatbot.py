@@ -4,6 +4,8 @@ import os
 import sys
 # import markdown
 
+import argparse
+
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 initial_prompt = "You are a helpful assistant."
 
@@ -128,5 +130,25 @@ with gr.Blocks() as demo:
     delLastBtn.click(delete_last_conversation, [chatbot, context], [chatbot, context], show_progress=True)
     reduceTokenBtn.click(reduce_token, [chatbot, systemPrompt, context], [chatbot, context], show_progress=True)
 
+def args_parser():
+    default_port = 4000
+    default_server_name = "0.0.0.0"
+    parser = argparse.ArgumentParser(
+                    prog = 'ChuanhuChatBot',
+                    description = 'GUI for using chatgpt api. Must define api key in environment variable OPENAI_API_KEY first.')
+    parser.add_argument('-p', '--port', type=int, default=default_port, help="Listening port. Default is " + str(default_port))
+    parser.add_argument('--server_name', type=str, default=default_server_name, help="Server name. Default is " + default_server_name + " which allow visitors visit website from any ip this computer has. If you only allow visiting from current computer, set it to 127.0.0.1")
+    parser.add_argument('--username', help="Username for accessing this website. Leave it empty if you don't need it.")
+    parser.add_argument('--password', help="Password for accessing this website. Leave it empty if you don't need it.")
 
-demo.launch()
+    args = parser.parse_args()
+    return args.server_name, args.port, args.username, args.password
+
+
+if __name__ == "__main__":
+    server_name, port, username, password = args_parser()
+    if username and password:
+        demo.launch(server_name=server_name, server_port=port, auth=(username, password))
+    else:
+        demo.launch(server_name=server_name, server_port=port)
+    
