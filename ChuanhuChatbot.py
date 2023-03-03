@@ -4,17 +4,15 @@ import os
 import sys
 # import markdown
 
-my_api_key = ""    # 在这里输入你的 API 密钥
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 initial_prompt = "You are a helpful assistant."
 
-if my_api_key == "":
-    my_api_key = os.environ.get('my_api_key')
 
-if my_api_key == "empty":
-    print("Please give a api key!")
+if OPENAI_API_KEY == "empty":
+    print("Please set api key to environment variable OPENAI_API_KEY")
     sys.exit(1)
 
-openai.api_key = my_api_key
+openai.api_key = OPENAI_API_KEY
 
 def parse_text(text):
     lines = text.split("\n")

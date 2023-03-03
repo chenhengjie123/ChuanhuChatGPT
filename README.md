@@ -8,9 +8,11 @@ GUI for ChatGPT API
 
 ## 安装方式
 
-- 填入你的 OpenAI API 密钥
+- 在环境变量中，加入 OPENAI_API_KEY 这个变量，值为 openai 的 api key：
 
-<img width="552" alt="SCR-20230302-sula" src="https://user-images.githubusercontent.com/51039745/222445258-248f2789-81d2-4f0a-8697-c720f588d8de.png">
+```
+export OPENAI_API_KEY=xxxxxx
+```
 
 - 安装依赖
 
