@@ -17,20 +17,8 @@ if OPENAI_API_KEY == "empty":
 openai.api_key = OPENAI_API_KEY
 
 def parse_text(text):
-    lines = text.split("\n")
-    for i,line in enumerate(lines):
-        if "```" in line:
-            items = line.split('`')
-            if items[-1]:
-                lines[i] = f'<pre><code class="{items[-1]}">'
-            else:
-                lines[i] = f'</code></pre>'
-        else:
-            if i>0:
-                line = line.replace("<", "&lt;")
-                line = line.replace(">", "&gt;")
-                lines[i] = '<br/>'+line.replace(" ", "&nbsp;")
-    return "".join(lines)
+    # 特别注意，需要用pip装上Pygments库才会获得代码高亮特性
+    return markdown.markdown(text, extensions=['fenced_code', 'codehilite', 'tables'])
 
 def get_response(system, context, raw = False):
     response = openai.ChatCompletion.create(
