@@ -20,6 +20,26 @@ def parse_text(text):
     # 特别注意，需要用pip装上Pygments库才会获得代码高亮特性
     html = markdown.markdown(text, extensions=['fenced_code', 'codehilite', 'tables'])
     print("markdown converted to html: " + html)
+    # 转换后的html传输给前端时，代码块前面的空格会丢失导致缩进失败。需要特殊处理下。
+    lines = html.split("\n")
+    inside_pre = False
+    for i, line in enumerate(lines):
+        if "<pre>" in line:
+            inside_pre = True
+        if "</pre>" in line:
+            inside_pre = False
+        if inside_pre:
+            # 对本行正式内容前面的所有空格，都转为 &nbsp;
+            new_line = ""
+            for line_i in range(len(line)):
+                if line[line_i] == " ":
+                    new_line += "&nbsp;"
+                else:
+                    new_line += line[line_i:]
+                    break
+            lines[i] = new_line
+    html = "<br>".join(lines)
+    print("fixed blank issues: " + html)
     return html
 
 def get_response(system, context, raw = False):
