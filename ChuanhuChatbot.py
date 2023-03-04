@@ -18,7 +18,9 @@ openai.api_key = OPENAI_API_KEY
 
 def parse_text(text):
     # 特别注意，需要用pip装上Pygments库才会获得代码高亮特性
-    return markdown.markdown(text, extensions=['fenced_code', 'codehilite', 'tables'])
+    html = markdown.markdown(text, extensions=['fenced_code', 'codehilite', 'tables'])
+    # 接口返回数据时，缩进都会被干掉，所以这里需要手动把缩进加回来
+    return html.replace(" ", "&nbsp;").replace("\n", "<br/>")
 
 def get_response(system, context, raw = False):
     response = openai.ChatCompletion.create(
