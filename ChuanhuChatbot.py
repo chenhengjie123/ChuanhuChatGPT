@@ -17,7 +17,8 @@ if OPENAI_API_KEY == "empty":
 openai.api_key = OPENAI_API_KEY
 
 def parse_text(text):
-    return markdown.markdown(text)
+    return text
+    # return markdown.markdown(text)
     # lines = text.split("\n")
     # for i,line in enumerate(lines):
     #     if "```" in line:
