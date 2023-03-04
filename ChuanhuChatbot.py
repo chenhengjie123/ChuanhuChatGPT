@@ -17,8 +17,6 @@ if OPENAI_API_KEY == "empty":
 openai.api_key = OPENAI_API_KEY
 
 def parse_text(text):
-    # return text
-    # return markdown.markdown(text)
     lines = text.split("\n")
     for i,line in enumerate(lines):
         if "```" in line:
@@ -39,6 +37,8 @@ def get_response(system, context, raw = False):
         model="gpt-3.5-turbo",
         messages=[system, *context],
     )
+    print(f"response: {response}")
+
     if raw:
         return response
     else:
