@@ -6,6 +6,8 @@ import markdown
 
 import argparse
 
+from markdown.extensions.codehilite import CodeHiliteExtension
+
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 initial_prompt = "You are a helpful assistant."
 
@@ -18,7 +20,7 @@ openai.api_key = OPENAI_API_KEY
 
 def parse_text(text):
     # 特别注意，需要用pip装上Pygments库才会获得代码高亮特性
-    html = markdown.markdown(text, extensions=['fenced_code', 'codehilite', 'tables'])
+    html = markdown.markdown(text, extensions=['fenced_code', CodeHiliteExtension(pygments_style="github-dark", noclasses=True), 'tables'])
     print("markdown converted to html: " + html)
     # 转换后的html传输给前端时，代码块前面的空格会丢失导致缩进失败。需要特殊处理下。
     lines = html.split("\n")
@@ -111,86 +113,7 @@ def update_system(new_system_prompt):
     return {"role": "system", "content": new_system_prompt}
 
 # 代码着色的 css 可参照：https://richleland.github.io/pygments-css/ 进行生成。这里用的是 vim 主题
-with gr.Blocks(css="""
-.codehilite .hll { background-color: #222222 }
-.codehilite  { background: #000000; color: #cccccc }
-.codehilite .c { color: #000080 } /* Comment */
-.codehilite .err { color: #cccccc; border: 1px solid #FF0000 } /* Error */
-.codehilite .esc { color: #cccccc } /* Escape */
-.codehilite .g { color: #cccccc } /* Generic */
-.codehilite .k { color: #cdcd00 } /* Keyword */
-.codehilite .l { color: #cccccc } /* Literal */
-.codehilite .n { color: #cccccc } /* Name */
-.codehilite .o { color: #3399cc } /* Operator */
-.codehilite .x { color: #cccccc } /* Other */
-.codehilite .p { color: #cccccc } /* Punctuation */
-.codehilite .ch { color: #000080 } /* Comment.Hashbang */
-.codehilite .cm { color: #000080 } /* Comment.Multiline */
-.codehilite .cp { color: #000080 } /* Comment.Preproc */
-.codehilite .cpf { color: #000080 } /* Comment.PreprocFile */
-.codehilite .c1 { color: #000080 } /* Comment.Single */
-.codehilite .cs { color: #cd0000; font-weight: bold } /* Comment.Special */
-.codehilite .gd { color: #cd0000 } /* Generic.Deleted */
-.codehilite .ge { color: #cccccc; font-style: italic } /* Generic.Emph */
-.codehilite .gr { color: #FF0000 } /* Generic.Error */
-.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.codehilite .gi { color: #00cd00 } /* Generic.Inserted */
-.codehilite .go { color: #888888 } /* Generic.Output */
-.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
-.codehilite .gs { color: #cccccc; font-weight: bold } /* Generic.Strong */
-.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.codehilite .gt { color: #0044DD } /* Generic.Traceback */
-.codehilite .kc { color: #cdcd00 } /* Keyword.Constant */
-.codehilite .kd { color: #00cd00 } /* Keyword.Declaration */
-.codehilite .kn { color: #cd00cd } /* Keyword.Namespace */
-.codehilite .kp { color: #cdcd00 } /* Keyword.Pseudo */
-.codehilite .kr { color: #cdcd00 } /* Keyword.Reserved */
-.codehilite .kt { color: #00cd00 } /* Keyword.Type */
-.codehilite .ld { color: #cccccc } /* Literal.Date */
-.codehilite .m { color: #cd00cd } /* Literal.Number */
-.codehilite .s { color: #cd0000 } /* Literal.String */
-.codehilite .na { color: #cccccc } /* Name.Attribute */
-.codehilite .nb { color: #cd00cd } /* Name.Builtin */
-.codehilite .nc { color: #00cdcd } /* Name.Class */
-.codehilite .no { color: #cccccc } /* Name.Constant */
-.codehilite .nd { color: #cccccc } /* Name.Decorator */
-.codehilite .ni { color: #cccccc } /* Name.Entity */
-.codehilite .ne { color: #666699; font-weight: bold } /* Name.Exception */
-.codehilite .nf { color: #cccccc } /* Name.Function */
-.codehilite .nl { color: #cccccc } /* Name.Label */
-.codehilite .nn { color: #cccccc } /* Name.Namespace */
-.codehilite .nx { color: #cccccc } /* Name.Other */
-.codehilite .py { color: #cccccc } /* Name.Property */
-.codehilite .nt { color: #cccccc } /* Name.Tag */
-.codehilite .nv { color: #00cdcd } /* Name.Variable */
-.codehilite .ow { color: #cdcd00 } /* Operator.Word */
-.codehilite .w { color: #cccccc } /* Text.Whitespace */
-.codehilite .mb { color: #cd00cd } /* Literal.Number.Bin */
-.codehilite .mf { color: #cd00cd } /* Literal.Number.Float */
-.codehilite .mh { color: #cd00cd } /* Literal.Number.Hex */
-.codehilite .mi { color: #cd00cd } /* Literal.Number.Integer */
-.codehilite .mo { color: #cd00cd } /* Literal.Number.Oct */
-.codehilite .sa { color: #cd0000 } /* Literal.String.Affix */
-.codehilite .sb { color: #cd0000 } /* Literal.String.Backtick */
-.codehilite .sc { color: #cd0000 } /* Literal.String.Char */
-.codehilite .dl { color: #cd0000 } /* Literal.String.Delimiter */
-.codehilite .sd { color: #cd0000 } /* Literal.String.Doc */
-.codehilite .s2 { color: #cd0000 } /* Literal.String.Double */
-.codehilite .se { color: #cd0000 } /* Literal.String.Escape */
-.codehilite .sh { color: #cd0000 } /* Literal.String.Heredoc */
-.codehilite .si { color: #cd0000 } /* Literal.String.Interpol */
-.codehilite .sx { color: #cd0000 } /* Literal.String.Other */
-.codehilite .sr { color: #cd0000 } /* Literal.String.Regex */
-.codehilite .s1 { color: #cd0000 } /* Literal.String.Single */
-.codehilite .ss { color: #cd0000 } /* Literal.String.Symbol */
-.codehilite .bp { color: #cd00cd } /* Name.Builtin.Pseudo */
-.codehilite .fm { color: #cccccc } /* Name.Function.Magic */
-.codehilite .vc { color: #00cdcd } /* Name.Variable.Class */
-.codehilite .vg { color: #00cdcd } /* Name.Variable.Global */
-.codehilite .vi { color: #00cdcd } /* Name.Variable.Instance */
-.codehilite .vm { color: #00cdcd } /* Name.Variable.Magic */
-.codehilite .il { color: #cd00cd } /* Literal.Number.Integer.Long */
-""") as demo:
+with gr.Blocks() as demo:
     chatbot = gr.Chatbot().style(color_map=("#1D51EE", "#585A5B"))
     context = gr.State([])
     systemPrompt = gr.State(update_system(initial_prompt))
