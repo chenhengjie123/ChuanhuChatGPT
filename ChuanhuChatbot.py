@@ -112,7 +112,6 @@ def reset_state():
 def update_system(new_system_prompt):
     return {"role": "system", "content": new_system_prompt}
 
-# 代码着色的 css 可参照：https://richleland.github.io/pygments-css/ 进行生成。这里用的是 vim 主题
 with gr.Blocks() as demo:
     chatbot = gr.Chatbot().style(color_map=("#1D51EE", "#585A5B"))
     context = gr.State([])
