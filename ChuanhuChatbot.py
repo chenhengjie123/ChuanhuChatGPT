@@ -129,6 +129,7 @@ with gr.Blocks() as demo:
         delLastBtn = gr.Button("🗑️ 删除上条对话")
         reduceTokenBtn = gr.Button("♻️ 优化Tokens")
 
+    # TODO: prompt 支持自动填充，方便用户选择最适合自己场景的 prompt
     newSystemPrompt = gr.Textbox(show_label=True, placeholder=f"在这里输入新的System Prompt...", label="更改 System prompt").style(container=True)
     systemPromptDisplay = gr.Textbox(show_label=True, value=initial_prompt, interactive=False, label="目前的 System prompt").style(container=True)
 
@@ -149,20 +150,32 @@ def args_parser():
     default_server_name = "0.0.0.0"
     parser = argparse.ArgumentParser(
                     prog = 'ChuanhuChatBot',
-                    description = 'GUI for using chatgpt api. Must define api key in environment variable OPENAI_API_KEY first.')
+                    description = 'GUI for using chatgpt api. '
+                                  'Must define api key in environment variable OPENAI_API_KEY first.')
     parser.add_argument('-p', '--port', type=int, default=default_port, help="Listening port. Default is " + str(default_port))
     parser.add_argument('--server_name', type=str, default=default_server_name, help="Server name. Default is " + default_server_name + " which allow visitors visit website from any ip this computer has. If you only allow visiting from current computer, set it to 127.0.0.1")
-    parser.add_argument('--username', help="Username for accessing this website. Leave it empty if you don't need it.")
-    parser.add_argument('--password', help="Password for accessing this website. Leave it empty if you don't need it.")
+    parser.add_argument('--username_and_password',
+                        nargs='*',
+                        help="Username and password for accessing this website. "
+                             "Use '/' as split symbol for username and password, and blank between accounts"
+                             "Example: 'username/password username2/password2'")
 
     args = parser.parse_args()
-    return args.server_name, args.port, args.username, args.password
+    return args.server_name, args.port, args.username_and_password
 
 
 if __name__ == "__main__":
-    server_name, port, username, password = args_parser()
-    if username and password:
-        demo.launch(server_name=server_name, server_port=port, auth=(username, password))
+    server_name, port, username_and_password = args_parser()
+    gr.close_all()
+    if username_and_password:
+        for i in range(len(username_and_password)):
+            username_and_password_tuple = username_and_password[i].split('/')
+            if len(username_and_password_tuple) != 2:
+                raise ValueError(f"'{username_and_password[i]}' is invalid. Please write as 'username/password'. "
+                                 f"Make sure only one '/' exist")
+            else:
+                username_and_password[i] = username_and_password_tuple
+        demo.launch(server_name=server_name, server_port=port, auth=username_and_password)
     else:
         demo.launch(server_name=server_name, server_port=port)
     
