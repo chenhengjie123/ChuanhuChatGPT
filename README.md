@@ -3,6 +3,8 @@
 # 川虎 ChatGPT
 为ChatGPT API提供了一个Web图形界面。
 
+基于 https://github.com/GaiZhenbiao/ChuanhuChatGPT 进行扩展。感谢原作者的优秀项目。
+
 GUI for ChatGPT API
 <img width="1204" alt="截屏2023-03-03 13 59 46" src="https://user-images.githubusercontent.com/51039745/222643242-c0b90a54-8f07-4fb6-b88e-ef338fd80f49.png">
 
@@ -33,36 +35,16 @@ pip3 install -r requirements.txt
 - 启动
 
 ```
-python ChuanhuChatbot.py
-```
-
-如果报错，试试
-
-```
 python3 ChuanhuChatbot.py
 ```
 
-如果还是不行，请先[安装Python](https://www.runoob.com/python/python-install.html)。
+详细启动命令支持的参数，可通过
 
-## 或者，使用Docker 安装与运行
-
-构建镜像
-```
-docker build -t chuanhuchatgpt:latest .
+```shell
+python3 ChuanhuChatbot.py --help
 ```
 
-一键运行
-```
-docker run -d --name chatgpt -e my_api_key="替换成API"  --network host chuanhuchatgpt:latest
-```
-
-查看本地访问地址
-```
-docker logs chatgpt
-```
-
-
-
+获取
 
 ## 使用技巧
 
